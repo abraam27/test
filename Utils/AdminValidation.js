@@ -3,7 +3,7 @@ var ajv = new Ajv();
 const AdminSchema = {
     type:"object",
     properties:{
-        adminName:{type:"string" },
+        adminName:{type:"string",pattern:"^[a-zA-Z\s\.]*$" },
         userName:{type:"string",pattern:"^[a-zA-Z0-9]+$" },
         password:{type:"string",minLength:5 },
         role:{type:"string"}

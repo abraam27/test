@@ -8,11 +8,10 @@ const FieldSchema = {
         price:{type:"string",pattern:"^[0-9]+$",maxLength:3,minLength:1},
         rate:{type:"string",pattern:"^[1-5]+$",maxLength:1},
         fieldOwnerId:{type:"string"},
-        valid:{type:"string",pattern:"^[0-1]+$"},
-        
+        valid:{type:"string",pattern:"^[0-1]+$"}
     },
     required:["fieldName","location","price","fieldOwnerId"],
-    additionalProperties:false
+    additionalProperties:true
 }
 const FieldValidate = ajv.compile(FieldSchema);
 

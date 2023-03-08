@@ -45,12 +45,20 @@ var DeleteField = async (req, res)=>{
         res.status(400).send("Not Deleted !");
     }
 };
+var UpdateStatus = async (req, res)=>{
+    if(FieldServices.UpdateStatus(req.params.id)){
+        res.status(201).send("Status Updated Successfully !");
+    }else{
+        res.status(400).send("Not Updated !");
+    }
+};
 var GetAllFieldsByFieldOwnerID = async (req, res)=>{
     res.status(200).json(await FieldServices.GetAllFieldsByFieldOwnerID(req.params.id));
 };
 var GetFieldsByLocation = async (req, res)=>{
     res.status(200).json(await FieldServices.GetFieldsByLocation(req.params.location));
 };
+
 module.exports = {
     GetAllFields,
     GetFieldByID,
@@ -60,5 +68,6 @@ module.exports = {
     GetAllFieldsByFieldOwnerID,
     GetAllValidFields,
     GetNotValidFields,
-    GetFieldsByLocation
+    GetFieldsByLocation,
+    UpdateStatus
 };

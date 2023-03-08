@@ -15,12 +15,6 @@ router.put("/update",FieldOwnerController.UpdateFieldOwner);
 router.delete("/delete/:id",FieldOwnerController.DeleteFieldOwner);
 // FieldOwner get all fields
 router.get("/fields/:id",FieldController.GetAllFieldsByFieldOwnerID);
-// reset password
-router.patch("/resetPassword/:userName",FieldOwnerController.ResetPassword);
-// send email to reset password
-router.post("/emailToUpdatePw/:fullName/:email/:userName",FieldOwnerController.SendEmailPw);
-// change status 
-router.patch("/changeStatus/:userName",FieldOwnerController.ChangeSatus);
 
 
 module.exports = router;

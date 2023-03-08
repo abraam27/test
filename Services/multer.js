@@ -25,7 +25,7 @@ function myMulter(customPath , customValidator) {
     if (!customPath || customPath == null) {
         customPath = 'general'
     }
-    const fullPath = path.join(__dirname , `../${customPath}`);
+    const fullPath = path.join(__dirname , `../uploads/${customPath}`);
     if (!fs.existsSync(fullPath)) {
         fs.mkdirSync(fullPath , {recursive:true})
     }
@@ -33,11 +33,11 @@ function myMulter(customPath , customValidator) {
     const storage = multer.diskStorage({
 
         destination: function (req , file , cb) {
-            req.finalDestination = `/${customPath}`
+            req.finalDestination = `/uploads/${customPath}`
             cb( null , fullPath);
         },
         filename: function( req , file , cb){
-            cb(null , Date.now()+ "_" + file.originalname )
+            cb(null , Date().now+ "_" + file.originalname )
         }
     })
 

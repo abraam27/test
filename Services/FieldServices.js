@@ -13,25 +13,51 @@ class FieldServices{
         return await Field.find({});
     }
     static async GetFieldByID(id){
+        var date = new Date();
+        var month = (date.getMonth() + 1)<10 ? ("0" + (date.getMonth() + 1)) : date.getMonth() + 1;
+        var day = date.getDate()<10 ? "0" + date.getDate() : date.getDate();
+        var currentDate = `${date.getFullYear()}/${month}/${day}`;
         var field = await Field.findById(id);
-        var hoursOfDay = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 18, 19, 20, 21, 22, 23]
-        var reservedHours = [];
-        var games = await Game.find({fieldOwnerId:id});
-        const date = new Date();
-        let month = (date.getMonth() + 1)<10 ? ("0" + (date.getMonth() + 1)) : date.getMonth() + 1;
-        let day = date.getDate()<10 ? "0" + date.getDate() : date.getDate();
-        let currentDate = `${date.getFullYear()}/${month}/${day}`;
+        var calender = [];
+        var games = await Game.find({fieldOwnerId:id, date :{$gte: currentDate}});
+        if(calender.length == 0){
+            var reservedDate = {};
+            reservedDate.date = currentDate;
+            var reservedHours = [];
+            for(var k=0; k<=date.getHours() ;k++){
+                reservedHours.push(k);
+            }
+            reservedDate.reservedHours = reservedHours;
+            calender.push(reservedDate);
+        }
         for(var i=0 ; i<games.length ; i++){
-            if(games[i].date == currentDate){
-                for(var j=0 ; j<hoursOfDay.length ; j++){
-                    if(date.getHours >= hoursOfDay[j]){
-                        reservedHours.push(hoursOfDay[j]);
-                    }
-                    console.log(reservedHours);
+            if((games[i].date == currentDate) && (+games[i].hour > +date.getHours())){
+                console.log(games[i].hour);
+                calender[0].reservedHours.push(games[i].hour);
+            }
+            for(var j=0 ; j<calender.length ; j++){
+                if(calender[j].date == games[i].date && (games[i].date != currentDate)){
+                    calender[j].reservedHours.push(games[i].hour);
                 }
             }
+            var flag = 1;
+            for(var j=0 ; j<calender.length ; j++){
+                if(calender[j].date == games[i].date){
+                    flag = 0;
+                }
+            }
+            if(flag){
+                console.log(games[i])
+                var newReservedDate = {};
+                newReservedDate.date = games[i].date;
+                var newReservedHours = [];
+                newReservedHours.push(games[i].hour);
+                newReservedDate.reservedHours = newReservedHours;
+                calender.push(newReservedDate);
+            }
         }
-        return  field;
+        field = {...field._doc, calender : calender}
+        return field;
     }
     async AddField(){
         var newField = new Field({ fieldName: this.fieldName, location: this.location, price: this.price, rate: this.rate, fieldOwnerId: this.fieldOwnerId,valid:this.valid});
@@ -61,6 +87,13 @@ class FieldServices{
     }
     static async GetFieldsByLocation(location){
         return await Field.find({location: { $regex: '.*' + location + '.*' },valid:1})
+    }
+    static async UpdateStatus(id){
+        if(await Field.updateOne({_id:id}, {valid:"1"})){
+            return true;
+        }else{
+            return false;
+        }
     }
 }
 module.exports = FieldServices;
